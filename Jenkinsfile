@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
-                    sh "docker build -t ${imageName} ."
+                    bat "docker build -t ${imageName} ."
                 }
             }
         }
@@ -19,10 +19,10 @@ pipeline {
                 script {
                     def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-                        sh "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS docker.io"
+                        bat "docker login -u %DOCKERHUB_USER% -p %DOCKERHUB_PASS% docker.io"
                     }
-                    sh "docker push ${imageName}"
-                    sh "docker logout"
+                    bat "docker push ${imageName}"
+                    bat "docker logout"
                 }
             }
         }
@@ -39,10 +39,11 @@ pipeline {
 
                     // Apply the deployment
                     withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
-                        sh 'kubectl apply -f ./deployment.yaml'
+                        bat 'kubectl apply -f ./deployment.yaml'
                     }
                 }
             }
-        } // Added the missing closing brace for stage('Deploy to Kubernetes') block
+        }
     }
 }
+
