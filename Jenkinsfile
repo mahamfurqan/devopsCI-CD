@@ -27,16 +27,19 @@ pipeline {
             }
         }
         stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // Update the image in the deployment YAML file
-                    def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
-                    sh "sed -i 's|furqanmaham9308/app:latest|${imageName}|' ./deployment.yaml"
-                    // Apply the deployment
-                    withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl apply -f ./deployment.yaml'
-}
-                }
+    steps {
+        script {
+            // Update the image in the deployment YAML file
+            def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
+            def deploymentFile = 'deployment.yaml'
+
+            def deploymentContent = readFile(deploymentFile)
+            def updatedContent = deploymentContent.replaceAll('furqanmaham9308/app:latest', imageName)
+            writeFile file: deploymentFile, text: updatedContent
+
+            // Apply the deployment
+            withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
+                sh 'kubectl apply -f ./deployment.yaml'
             }
         }
     }
