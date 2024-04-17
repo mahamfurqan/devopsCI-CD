@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {  
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/mahamfurqan/devopsCI-CD'
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/mahamfurqan/devopsCI-CD.git'
             }
         }
         stage('Build Docker Image') {
