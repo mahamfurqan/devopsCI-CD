@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
-                    bat "docker build -t ${imageName} ."
+                    sh "docker build -t ${imageName} ."
                 }
             }
         }
@@ -19,10 +19,10 @@ pipeline {
                 script {
                     def imageName = "furqanmaham9308/app:${env.BUILD_NUMBER}"
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-                        bat "docker login -u %DOCKERHUB_USER% -p %DOCKERHUB_PASS% docker.io"
+                        sh "docker login -u %DOCKERHUB_USER% -p %DOCKERHUB_PASS% docker.io"
                     }
-                    bat "docker push ${imageName}"
-                    bat "docker logout"
+                    sh "docker push ${imageName}"
+                    sh "docker logout"
                 }
             }
         }
@@ -39,7 +39,7 @@ pipeline {
 
                     // Apply the deployment
                     withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
-                        bat 'kubectl apply -f ./deployment.yaml'
+                        sh 'kubectl apply -f ./deployment.yaml'
                     }
                 }
             }
